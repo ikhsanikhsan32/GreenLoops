@@ -135,24 +135,6 @@ export default function SorcastPage() {
               </Button>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-headline">Remote Sensing Imagery</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="aspect-video bg-muted rounded-md flex items-center justify-center">
-                 <Image
-                    src="https://placehold.co/600x400.png"
-                    alt="Satellite image of farmland"
-                    width={600}
-                    height={400}
-                    className="rounded-md object-cover"
-                    data-ai-hint="satellite farmland"
-                  />
-              </div>
-              <Button variant="outline" className="w-full mt-4" disabled>Upload Image (Coming Soon)</Button>
-            </CardContent>
-          </Card>
         </div>
 
         <div className="lg:col-span-2 space-y-8">
