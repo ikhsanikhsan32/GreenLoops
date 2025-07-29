@@ -2,7 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Recycle } from 'lucide-react';
+import { Menu } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -20,8 +21,13 @@ export default function Header() {
     <header className="bg-primary/90 text-primary-foreground shadow-md backdrop-blur-sm sticky top-0 z-40">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2">
-          <Recycle className="h-6 w-6" />
-          <span className="text-lg font-bold font-headline">GreenLoops</span>
+          <Image
+            src="https://i.ibb.co/M5h4NLf/Group-11.png"
+            alt="GreenLoops Logo"
+            width={120}
+            height={40}
+            priority
+          />
         </Link>
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
           {navLinks.map((link) => (
@@ -43,9 +49,18 @@ export default function Header() {
           </SheetTrigger>
           <SheetContent side="left" className="bg-primary text-primary-foreground">
             <div className="flex flex-col gap-6 p-6">
-              <Link href="/" className="flex items-center gap-2 mb-4" onClick={() => setSheetOpen(false)}>
-                <Recycle className="h-6 w-6" />
-                <span className="text-lg font-bold font-headline">GreenLoops</span>
+              <Link
+                href="/"
+                className="flex items-center gap-2 mb-4"
+                onClick={() => setSheetOpen(false)}
+              >
+                <Image
+                  src="https://i.ibb.co/M5h4NLf/Group-11.png"
+                  alt="GreenLoops Logo"
+                  width={120}
+                  height={40}
+                  priority
+                />
               </Link>
               <nav className="flex flex-col gap-4">
                 {navLinks.map((link) => (

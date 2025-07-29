@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { BarChart3, Leaf, ScanSearch, Store } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Home() {
@@ -45,9 +46,14 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center">
       <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 text-center bg-card">
         <div className="container px-4 md:px-6">
-          <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline text-foreground">
-            GreenLoops
-          </h1>
+           <Image
+              src="https://i.ibb.co/M5h4NLf/Group-11.png"
+              alt="GreenLoops Logo"
+              width={400}
+              height={100}
+              className="mx-auto"
+              priority
+            />
           <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl my-4">
             Powering Sustainable Agro-industrial Waste Utilization in Indonesia.
           </p>
