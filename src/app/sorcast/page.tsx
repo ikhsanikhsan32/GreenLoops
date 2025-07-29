@@ -25,26 +25,43 @@ import { useToast } from '@/hooks/use-toast';
 import { type PredictSorghumYieldOutput } from '@/ai/types';
 
 export default function SorcastPage() {
-  const [soilPh, setSoilPh] = useState('6.5');
-  const [nitrogen, setNitrogen] = useState('80');
-  const [plantingDensity, setPlantingDensity] = useState('150000');
-  const [sorghumVariety, setSorghumVariety] = useState('numbu');
+  const [landArea, setLandArea] = useState('10');
+  const [farmingTechnique, setFarmingTechnique] = useState('conventional');
+  const [plantingDistance, setPlantingDistance] = useState('75cm x 25cm');
+  const [harvestData, setHarvestData] = useState(['3.2', '3.5', '3.3', '3.6', '3.4']);
   const [isPending, startTransition] = useTransition();
   const [prediction, setPrediction] = useState<PredictSorghumYieldOutput | null>(null);
   const { toast } = useToast();
 
+  const handleHarvestDataChange = (index: number, value: string) => {
+    const newHarvestData = [...harvestData];
+    newHarvestData[index] = value;
+    setHarvestData(newHarvestData);
+  }
+
   const handlePredict = () => {
+    const historicalHarvestData = harvestData.map(d => parseFloat(d)).filter(d => !isNaN(d));
+
+    if (historicalHarvestData.length !== 5) {
+      toast({
+        title: "Input Tidak Lengkap",
+        description: "Silakan masukkan data panen untuk 5 tahun terakhir.",
+        variant: 'destructive'
+      });
+      return;
+    }
+
     const input = {
-      soilPh: parseFloat(soilPh),
-      nitrogen: parseFloat(nitrogen),
-      plantingDensity: parseFloat(plantingDensity),
-      sorghumVariety,
+      landArea: parseFloat(landArea),
+      farmingTechnique,
+      plantingDistance,
+      historicalHarvestData,
     };
 
-    if (isNaN(input.soilPh) || isNaN(input.nitrogen) || isNaN(input.plantingDensity)) {
+    if (isNaN(input.landArea)) {
        toast({
-        title: "Invalid Input",
-        description: "Please enter valid numbers for all parameters.",
+        title: "Input Tidak Valid",
+        description: "Silakan masukkan angka yang valid untuk semua parameter.",
         variant: 'destructive'
       })
       return;
@@ -54,16 +71,16 @@ export default function SorcastPage() {
       const result: ApiPredictionResult = await getYieldPrediction(input);
       if (result.error || !result.data) {
         toast({
-          title: "Prediction Failed",
-          description: result.error || "An unknown error occurred.",
+          title: "Prediksi Gagal",
+          description: result.error || "Terjadi kesalahan yang tidak diketahui.",
           variant: 'destructive'
         })
         setPrediction(null);
       } else {
         setPrediction(result.data);
          toast({
-          title: "Prediction Successful",
-          description: `Predicted yield is ${result.data.predictedYield.toFixed(2)} t/ha.`,
+          title: "Prediksi Berhasil",
+          description: `Prediksi hasil panen adalah ${result.data.predictedYield.toFixed(2)} t/ha.`,
         })
       }
     });
@@ -76,48 +93,79 @@ export default function SorcastPage() {
           SORCAST
         </h1>
         <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-          Sorghum Yield Prediction & Biomass Allocation. Input your data for AI-powered forecasts that optimize the entire plant for a zero-waste strategy.
+          Prediksi Hasil Panen Sorgum & Alokasi Biomassa. Masukkan data Anda untuk perkiraan berbasis AI yang mengoptimalkan seluruh tanaman untuk strategi tanpa limbah.
         </p>
       </div>
 
       <div className="grid gap-8 max-w-md mx-auto">
           <Card>
             <CardHeader>
-              <CardTitle className="font-headline">Input Parameters</CardTitle>
-              <CardDescription>Enter the details below to get a prediction.</CardDescription>
+              <CardTitle className="font-headline">Parameter Input</CardTitle>
+              <CardDescription>Masukkan detail di bawah ini untuk mendapatkan prediksi.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="soil-ph">Soil pH</Label>
-                <Input id="soil-ph" type="number" placeholder="e.g., 6.5" value={soilPh} onChange={(e) => setSoilPh(e.target.value)} />
+                <Label htmlFor="land-area">Luas Lahan (ha)</Label>
+                <Input id="land-area" type="number" placeholder="e.g., 10" value={landArea} onChange={(e) => setLandArea(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="nitrogen">Soil Nitrogen (kg/ha)</Label>
-                <Input id="nitrogen" type="number" placeholder="e.g., 80" value={nitrogen} onChange={(e) => setNitrogen(e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="planting-density">Planting Density (plants/ha)</Label>
-                <Input id="planting-density" type="number" placeholder="e.g., 150000" value={plantingDensity} onChange={(e) => setPlantingDensity(e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="sorghum-variety">Sorghum Variety</Label>
-                <Select value={sorghumVariety} onValueChange={setSorghumVariety}>
-                  <SelectTrigger id="sorghum-variety">
-                    <SelectValue placeholder="Select variety" />
+                <Label htmlFor="farming-technique">Teknik Pertanian</Label>
+                <Select value={farmingTechnique} onValueChange={setFarmingTechnique}>
+                  <SelectTrigger id="farming-technique">
+                    <SelectValue placeholder="Pilih teknik" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="numbu">Numbu</SelectItem>
-                    <SelectItem value="super-1">Super 1</SelectItem>
-                    <SelectItem value="kawali">Kawali</SelectItem>
+                    <SelectItem value="conventional">Konvensional</SelectItem>
+                    <SelectItem value="organic">Organik</SelectItem>
+                    <SelectItem value="conservation">Tani Konservasi</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="planting-distance">Jarak Tanam</Label>
+                <Input id="planting-distance" type="text" placeholder="e.g., 75cm x 25cm" value={plantingDistance} onChange={(e) => setPlantingDistance(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Data Panen 5 Tahun Terakhir (t/ha)</Label>
+                <div className="grid grid-cols-5 gap-2">
+                  {harvestData.map((data, index) => (
+                    <Input 
+                      key={index} 
+                      type="number" 
+                      placeholder={`Tahun ${index + 1}`} 
+                      value={data} 
+                      onChange={(e) => handleHarvestDataChange(index, e.target.value)}
+                    />
+                  ))}
+                </div>
+              </div>
               <Button className="w-full mt-4" onClick={handlePredict} disabled={isPending}>
                 {isPending ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <BrainCircuit className="w-4 h-4 mr-2" />}
-                {isPending ? 'Predicting...' : 'Predict Yield & Allocation'}
+                {isPending ? 'Memprediksi...' : 'Prediksi Hasil & Alokasi'}
               </Button>
             </CardContent>
           </Card>
+
+           {prediction && (
+            <Card className="animate-in fade-in-50">
+                <CardHeader>
+                    <CardTitle className="font-headline">Hasil Prediksi</CardTitle>
+                    <CardDescription>Hasil dari model AI Sorcast.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4 text-center">
+                        <div className="p-4 bg-muted rounded-lg">
+                            <Label className="text-sm text-muted-foreground">Prediksi Hasil Panen</Label>
+                            <p className="text-2xl font-bold text-primary">{prediction.predictedYield.toFixed(2)} t/ha</p>
+                        </div>
+                        <div className="p-4 bg-muted rounded-lg">
+                            <Label className="text-sm text-muted-foreground">Rata-rata Historis</Label>
+                            <p className="text-2xl font-bold">{prediction.historicalAverage.toFixed(2)} t/ha</p>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+           )}
       </div>
     </div>
   );

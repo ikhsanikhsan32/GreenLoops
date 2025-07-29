@@ -24,19 +24,12 @@ const prompt = ai.definePrompt({
   prompt: `You are an expert agricultural AI specializing in sorghum yield prediction, named Sorcast. Your goal is to predict yield and suggest biomass allocation.
 
   Based on the following parameters, predict the sorghum yield in tons per hectare.
-  - Soil pH: {{{soilPh}}}
-  - Nitrogen (kg/ha): {{{nitrogen}}}
-  - Planting Density (plants/ha): {{{plantingDensity}}}
-  - Sorghum Variety: {{{sorghumVariety}}}
+  - Land Area (ha): {{{landArea}}}
+  - Farming Technique: {{{farmingTechnique}}}
+  - Planting Distance: {{{plantingDistance}}}
+  - Last 5 Years Harvest Data (t/ha): {{#each historicalHarvestData}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
 
-  Also provide a 5-year historical average for the specified variety and a confidence score for your prediction.
-  
-  Assume the following historical averages for the varieties:
-  - Numbu: 3.4 t/ha
-  - Super 1: 4.0 t/ha
-  - Kawali: 3.7 t/ha
-
-  Base your prediction on ideal conditions and adjust based on the provided parameters. For example, ideal soil pH for sorghum is between 6.0 and 7.5. Deviations from this range should negatively impact the yield. Similarly, optimal nitrogen levels are between 80-120 kg/ha.
+  Also provide a 5-year historical average based on the provided data and a confidence score for your prediction.
   
   After predicting the total yield, classify the biomass into the following categories as percentages of the total yield:
   - Grains (for food): 30%

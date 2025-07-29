@@ -34,10 +34,10 @@ const BiomassAllocationSchema = z.object({
 
 
 export const PredictSorghumYieldInputSchema = z.object({
-  soilPh: z.number().describe('The pH level of the soil.'),
-  nitrogen: z.number().describe('The amount of nitrogen in the soil in kg/ha.'),
-  plantingDensity: z.number().describe('The density of plants per hectare.'),
-  sorghumVariety: z.string().describe('The variety of sorghum planted.'),
+  landArea: z.number().describe('The total land area in hectares.'),
+  farmingTechnique: z.string().describe('The farming technique used (e.g., conventional, organic).'),
+  plantingDistance: z.string().describe('The distance between plants (e.g., "75cm x 25cm").'),
+  historicalHarvestData: z.array(z.number()).describe('An array of harvest data in tons per hectare for the last 5 years.'),
 });
 export type PredictSorghumYieldInput = z.infer<
   typeof PredictSorghumYieldInputSchema
