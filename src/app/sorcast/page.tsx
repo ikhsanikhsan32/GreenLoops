@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -21,13 +22,13 @@ import { BrainCircuit, Loader, AreaChart } from 'lucide-react';
 import Image from 'next/image';
 import SorcastChart from './sorcast-chart';
 import { useState, useTransition } from 'react';
-import { getYieldPrediction } from './actions';
+import { getYieldPrediction, type PredictionResult as ApiPredictionResult } from './actions';
 import { useToast } from '@/hooks/use-toast';
 
 export type PredictionResult = {
-  predictedYield?: number;
-  historicalAverage?: number;
-  confidence?: number;
+  predictedYield: number;
+  historicalAverage: number;
+  confidence: number;
 };
 
 export default function SorcastPage() {
@@ -57,16 +58,16 @@ export default function SorcastPage() {
     }
 
     startTransition(async () => {
-      const result = await getYieldPrediction(input);
-      if (result.error) {
+      const result: ApiPredictionResult = await getYieldPrediction(input);
+      if (result.error || !result.data) {
         toast({
           title: "Prediction Failed",
-          description: result.error,
+          description: result.error || "An unknown error occurred.",
           variant: 'destructive'
         })
         setPrediction(null);
       } else {
-        setPrediction(result.data!);
+        setPrediction(result.data);
       }
     });
   };
@@ -126,7 +127,7 @@ export default function SorcastPage() {
                 </Select>
               </div>
               <Button className="w-full mt-4" onClick={handlePredict} disabled={isPending}>
-                {isPending ? <Loader className="animate-spin" /> : <BrainCircuit />}
+                {isPending ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <BrainCircuit className="w-4 h-4 mr-2" />}
                 {isPending ? 'Predicting...' : 'Predict Yield'}
               </Button>
             </CardContent>
@@ -156,7 +157,7 @@ export default function SorcastPage() {
             <CardHeader>
               <CardTitle className="font-headline">Yield Visualization</CardTitle>
             </CardHeader>
-            <CardContent className="flex-grow flex flex-col">
+            <CardContent className="flex-grow flex flex-col relative">
               <div className="flex-grow">
                  <SorcastChart data={chartData} />
               </div>
@@ -174,7 +175,7 @@ export default function SorcastPage() {
                 </div>
               )}
               
-              {prediction && (
+              {prediction && !isPending && (
                 <CardFooter className="flex-wrap gap-4 pt-6">
                   <div className="flex-1 min-w-[200px] p-4 bg-muted rounded-lg">
                     <p className="text-sm text-muted-foreground">Predicted Yield (2024)</p>
