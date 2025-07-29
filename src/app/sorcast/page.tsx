@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { BrainCircuit, Loader, Map, Upload, FileImage, Trash2 } from 'lucide-react';
+import { BrainCircuit, Loader, Map, Upload, FileImage, Trash2, MapPin } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { getYieldPrediction, type PredictionResult as ApiPredictionResult } from './actions';
 import { useToast } from '@/hooks/use-toast';
@@ -125,9 +125,9 @@ export default function SorcastPage() {
   };
 
   const biomassChartData = prediction ? [
-    { name: 'Grains (Food)', value: prediction.biomassAllocation.grains, fill: 'var(--color-grains)' },
-    { name: 'Stalks/Leaves (Briquettes)', value: prediction.biomassAllocation.stalksAndLeaves, fill: 'var(--color-stalksAndLeaves)' },
-    { name: 'Residual (Bioethanol/Fertilizer)', value: prediction.biomassAllocation.residualBiomass, fill: 'var(--color-residualBiomass)' },
+    { name: 'Grains (Food)', value: prediction.biomassAllocation.grains, fill: 'hsl(var(--chart-1))' },
+    { name: 'Stalks/Leaves (Briquettes)', value: prediction.biomassAllocation.stalksAndLeaves, fill: 'hsl(var(--chart-2))' },
+    { name: 'Residual (Bioethanol/Fertilizer)', value: prediction.biomassAllocation.residualBiomass, fill: 'hsl(var(--chart-3))' },
   ] : [];
 
   const yieldChartData = prediction ? [
@@ -140,7 +140,10 @@ export default function SorcastPage() {
       predicted: prediction.predictedYield,
       historical: null,
     }
-  ] : [];
+  ] : harvestData.map((yieldStr, index) => ({
+      year: `Year ${index - 4}`,
+      historical: parseFloat(yieldStr)
+  }));
 
   return (
     <div className="container mx-auto py-12 px-4 md:px-6">
@@ -211,9 +214,14 @@ export default function SorcastPage() {
                     {satelliteImageUri ? (
                         <Image src={satelliteImageUri} alt="Satellite image preview" layout="fill" objectFit="contain" />
                     ) : (
-                        <div className="text-center text-muted-foreground flex flex-col items-center">
-                            <FileImage className="w-12 h-12 mb-2"/>
-                            <p>Pratinjau gambar akan muncul di sini</p>
+                        <div className="relative w-full h-full">
+                            <Image src="https://placehold.co/600x400.png" alt="Map placeholder" layout="fill" objectFit="cover" data-ai-hint="satellite map" />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                                <div className="text-center text-white p-4 rounded-lg">
+                                    <MapPin className="w-12 h-12 mx-auto mb-2"/>
+                                    <p>Geser peta dan gambar lahan Anda</p>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -223,7 +231,7 @@ export default function SorcastPage() {
                     <Button asChild variant="outline" className="w-full cursor-pointer">
                         <div>
                         <Upload className="w-4 h-4 mr-2"/>
-                        Pilih Gambar
+                        Unggah Citra
                         </div>
                     </Button>
                 </Label>

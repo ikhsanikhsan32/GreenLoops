@@ -7,7 +7,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 
 const chartConfig = {
@@ -27,9 +27,9 @@ type SorcastChartProps = {
 
 export default function SorcastChart({ data }: SorcastChartProps) {
   return (
-    <ChartContainer config={chartConfig} className="min-h-[300px] w-full h-full">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
+    <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-full">
+      <ResponsiveContainer width="100%" height={250}>
+        <BarChart
           data={data}
           margin={{
             top: 5,
@@ -56,24 +56,17 @@ export default function SorcastChart({ data }: SorcastChartProps) {
             content={<ChartTooltipContent indicator="line" />}
           />
           <Legend content={<ChartLegend content={<ChartLegendContent />} />} />
-          <Line
+          <Bar
             dataKey="historical"
-            type="monotone"
-            stroke="var(--color-historical)"
-            strokeWidth={2}
-            dot={true}
-            connectNulls
+            fill="var(--color-historical)"
+            radius={4}
           />
-          <Line
+          <Bar
             dataKey="predicted"
-            type="monotone"
-            stroke="var(--color-predicted)"
-            strokeWidth={2}
-            strokeDasharray="5 5"
-            dot={true}
-            connectNulls
+            fill="var(--color-predicted)"
+            radius={4}
           />
-        </LineChart>
+        </BarChart>
       </ResponsiveContainer>
     </ChartContainer>
   );
