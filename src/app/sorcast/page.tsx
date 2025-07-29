@@ -8,6 +8,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,18 +19,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { BrainCircuit, Loader, AreaChart } from 'lucide-react';
+import { BrainCircuit, Loader, AreaChart, PieChart, Info } from 'lucide-react';
 import Image from 'next/image';
 import SorcastChart from './sorcast-chart';
 import { useState, useTransition } from 'react';
 import { getYieldPrediction, type PredictionResult as ApiPredictionResult } from './actions';
 import { useToast } from '@/hooks/use-toast';
-
-export type PredictionResult = {
-  predictedYield: number;
-  historicalAverage: number;
-  confidence: number;
-};
+import { type PredictSorghumYieldOutput } from '@/ai/types';
+import BiomassAllocationChart from './biomass-allocation-chart';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function SorcastPage() {
   const [soilPh, setSoilPh] = useState('6.5');
@@ -37,7 +35,7 @@ export default function SorcastPage() {
   const [plantingDensity, setPlantingDensity] = useState('150000');
   const [sorghumVariety, setSorghumVariety] = useState('numbu');
   const [isPending, startTransition] = useTransition();
-  const [prediction, setPrediction] = useState<PredictionResult | null>(null);
+  const [prediction, setPrediction] = useState<PredictSorghumYieldOutput | null>(null);
   const { toast } = useToast();
 
   const handlePredict = () => {
@@ -81,6 +79,12 @@ export default function SorcastPage() {
     { year: '2024', historical: null, predicted: prediction?.predictedYield ?? null },
   ];
 
+ const biomassChartData = prediction?.biomassAllocation ? [
+    { name: 'Grains (Food)', value: prediction.biomassAllocation.grains, fill: 'hsl(var(--chart-1))' },
+    { name: 'Stalks/Leaves (Briquettes)', value: prediction.biomassAllocation.stalksAndLeaves, fill: 'hsl(var(--chart-2))' },
+    { name: 'Residual (Bioethanol/Fertilizer)', value: prediction.biomassAllocation.residualBiomass, fill: 'hsl(var(--chart-3))' },
+ ] : [];
+
 
   return (
     <div className="container mx-auto py-12 px-4 md:px-6">
@@ -88,9 +92,8 @@ export default function SorcastPage() {
         <h1 className="text-4xl font-bold font-headline sm:text-5xl md:text-6xl">
           SORCAST
         </h1>
-        <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Sorghum Yield Prediction Tool. Input your data to get AI-powered
-          yield forecasts.
+        <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
+          Sorghum Yield Prediction & Biomass Allocation. Input your data for AI-powered forecasts that optimize the entire plant for a zero-waste strategy.
         </p>
       </div>
 
@@ -128,7 +131,7 @@ export default function SorcastPage() {
               </div>
               <Button className="w-full mt-4" onClick={handlePredict} disabled={isPending}>
                 {isPending ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <BrainCircuit className="w-4 h-4 mr-2" />}
-                {isPending ? 'Predicting...' : 'Predict Yield'}
+                {isPending ? 'Predicting...' : 'Predict Yield & Allocation'}
               </Button>
             </CardContent>
           </Card>
@@ -152,45 +155,65 @@ export default function SorcastPage() {
           </Card>
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-8">
           <Card className="h-full flex flex-col">
             <CardHeader>
-              <CardTitle className="font-headline">Yield Visualization</CardTitle>
+              <CardTitle className="font-headline">Prediction Dashboard</CardTitle>
             </CardHeader>
             <CardContent className="flex-grow flex flex-col relative">
-              <div className="flex-grow">
-                 <SorcastChart data={chartData} />
-              </div>
-             
-              {isPending && (
-                <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-lg">
-                  <Loader className="w-12 h-12 text-primary animate-spin" />
-                </div>
-              )}
-
-              {!isPending && !prediction && (
-                <div className="text-center text-muted-foreground p-8 flex flex-col items-center justify-center h-full">
-                  <AreaChart className="w-12 h-12 mb-4" />
-                  <p>Prediction results will appear here after you click "Predict Yield".</p>
-                </div>
+                
+              {(isPending || !prediction) && (
+                 <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-lg z-10">
+                   {isPending ? (
+                      <Loader className="w-12 h-12 text-primary animate-spin" />
+                   ) : (
+                      <div className="text-center text-muted-foreground p-8 flex flex-col items-center justify-center h-full">
+                        <AreaChart className="w-12 h-12 mb-4" />
+                        <p>Prediction results will appear here.</p>
+                      </div>
+                   )}
+                 </div>
               )}
               
-              {prediction && !isPending && (
-                <CardFooter className="flex-wrap gap-4 pt-6">
-                  <div className="flex-1 min-w-[200px] p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">Predicted Yield (2024)</p>
-                    <p className="text-2xl font-bold text-primary">{prediction.predictedYield?.toFixed(2)} t/ha</p>
-                  </div>
-                  <div className="flex-1 min-w-[200px] p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">5-Year Historical Average</p>
-                    <p className="text-2xl font-bold">{prediction.historicalAverage?.toFixed(2)} t/ha</p>
-                  </div>
-                   <div className="flex-1 min-w-[200px] p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">Confidence Level</p>
-                    <p className="text-2xl font-bold">{((prediction.confidence ?? 0) * 100).toFixed(0)}%</p>
-                  </div>
-                </CardFooter>
-              )}
+              <div className={`transition-opacity duration-300 ${isPending ? 'opacity-20' : 'opacity-100'}`}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div className="p-4 bg-muted rounded-lg">
+                        <p className="text-sm text-muted-foreground">Predicted Yield (2024)</p>
+                        <p className="text-2xl font-bold text-primary">{prediction?.predictedYield?.toFixed(2) ?? 'N/A'} t/ha</p>
+                    </div>
+                    <div className="p-4 bg-muted rounded-lg">
+                        <p className="text-sm text-muted-foreground">5-Year Historical Avg.</p>
+                        <p className="text-2xl font-bold">{prediction?.historicalAverage?.toFixed(2) ?? 'N/A'} t/ha</p>
+                    </div>
+                    <div className="p-4 bg-muted rounded-lg">
+                        <p className="text-sm text-muted-foreground">Confidence Level</p>
+                        <p className="text-2xl font-bold">{prediction ? `${((prediction.confidence) * 100).toFixed(0)}%` : 'N/A'}</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h3 className="font-headline text-lg mb-2">Yield Visualization</h3>
+                        <div className="h-[250px]">
+                           <SorcastChart data={chartData} />
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="font-headline text-lg mb-2">Biomass Allocation</h3>
+                        <div className="h-[250px] flex items-center justify-center">
+                           {prediction ? <BiomassAllocationChart data={biomassChartData} /> : <PieChart className="w-12 h-12 text-muted-foreground"/>}
+                        </div>
+                    </div>
+                </div>
+
+                <Alert className="mt-8">
+                  <Info className="h-4 w-4" />
+                  <AlertTitle className="font-headline">Model Insights</AlertTitle>
+                  <AlertDescription>
+                   Our model uses a Random Forest Regressor and LSTM for time-series analysis, providing accurate, interpretable yield forecasts to support sustainable bioenergy production.
+                  </AlertDescription>
+                </Alert>
+              </div>
             </CardContent>
           </Card>
         </div>

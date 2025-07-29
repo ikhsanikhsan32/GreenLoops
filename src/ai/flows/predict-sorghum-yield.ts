@@ -1,8 +1,8 @@
 'use server';
 /**
- * @fileOverview Predicts sorghum yield based on input parameters.
+ * @fileOverview Predicts sorghum yield and biomass allocation based on input parameters.
  * 
- * - predictSorghumYield - A function that predicts sorghum yield.
+ * - predictSorghumYield - A function that predicts sorghum yield and allocation.
  */
 
 import {ai} from '@/ai/genkit';
@@ -21,7 +21,7 @@ const prompt = ai.definePrompt({
   name: 'predictSorghumYieldPrompt',
   input: {schema: PredictSorghumYieldInputSchema},
   output: {schema: PredictSorghumYieldOutputSchema},
-  prompt: `You are an expert agricultural AI specializing in sorghum yield prediction.
+  prompt: `You are an expert agricultural AI specializing in sorghum yield prediction, named Sorcast. Your goal is to predict yield and suggest biomass allocation.
 
   Based on the following parameters, predict the sorghum yield in tons per hectare.
   - Soil pH: {{{soilPh}}}
@@ -37,6 +37,11 @@ const prompt = ai.definePrompt({
   - Kawali: 3.7 t/ha
 
   Base your prediction on ideal conditions and adjust based on the provided parameters. For example, ideal soil pH for sorghum is between 6.0 and 7.5. Deviations from this range should negatively impact the yield. Similarly, optimal nitrogen levels are between 80-120 kg/ha.
+  
+  After predicting the total yield, classify the biomass into the following categories as percentages of the total yield:
+  - Grains (for food): 30%
+  - Stalks and Leaves (for briquettes): 50%
+  - Residual Biomass (for bioethanol/fertilizer): 20%
   
   Respond in JSON format.`,
 });

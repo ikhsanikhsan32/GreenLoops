@@ -26,6 +26,13 @@ export type AnalyzeBriquetteQualityOutput = z.infer<
   typeof AnalyzeBriquetteQualityOutputSchema
 >;
 
+const BiomassAllocationSchema = z.object({
+    grains: z.number().describe('Percentage of biomass allocated to grains for food.'),
+    stalksAndLeaves: z.number().describe('Percentage of biomass allocated to stalks and leaves for briquettes.'),
+    residualBiomass: z.number().describe('Percentage of biomass allocated to residual for bioethanol or fertilizer.'),
+});
+
+
 export const PredictSorghumYieldInputSchema = z.object({
   soilPh: z.number().describe('The pH level of the soil.'),
   nitrogen: z.number().describe('The amount of nitrogen in the soil in kg/ha.'),
@@ -48,6 +55,7 @@ export const PredictSorghumYieldOutputSchema = z.object({
   confidence: z
     .number()
     .describe('The confidence level of the prediction, from 0 to 1.'),
+  biomassAllocation: BiomassAllocationSchema.describe('The breakdown of the biomass allocation.'),
 });
 export type PredictSorghumYieldOutput = z.infer<
   typeof PredictSorghumYieldOutputSchema
