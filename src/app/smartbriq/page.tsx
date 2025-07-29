@@ -13,6 +13,7 @@ const steps = [
     title: '1. Sorting Waste',
     content:
       'Separate sorghum waste (stalks, leaves) from other materials. Ensure the waste is clean and free from soil, rocks, or plastic contaminants for higher quality briquettes.',
+    imageUrl: 'https://i.ibb.co/VvZg3d2/sorghum-waste.jpg',
     videoHint: 'sorghum waste',
   },
   {
@@ -20,6 +21,7 @@ const steps = [
     title: '2. Drying',
     content:
       'Reduce the moisture content of the sorghum waste to below 12%. This can be done by sun-drying for several days or using a mechanical dryer. Proper drying is crucial for efficient combustion.',
+    imageUrl: 'https://i.ibb.co/YyLwGZc/drying-biomass.jpg',
     videoHint: 'drying biomass',
   },
   {
@@ -27,6 +29,7 @@ const steps = [
     title: '3. Carbonization (Pyrolysis)',
     content:
       'Heat the dried biomass in a low-oxygen environment (a pyrolysis kiln). This process, called carbonization, converts the biomass into char, which burns cleaner and longer.',
+    imageUrl: 'https://i.ibb.co/qYn0M7s/pyrolysis-kiln.jpg',
     videoHint: 'pyrolysis kiln',
   },
   {
@@ -34,6 +37,7 @@ const steps = [
     title: '4. Grinding',
     content:
       'Grind the resulting char into a fine, uniform powder. A smaller particle size allows for better compaction and a denser, more durable briquette.',
+    imageUrl: 'https://i.ibb.co/L51kL06/grinding-char.jpg',
     videoHint: 'grinding char',
   },
   {
@@ -41,6 +45,7 @@ const steps = [
     title: '5. Mixing with Binder',
     content:
       'Mix the char powder with a natural binder, such as starch or clay, at a ratio of about 10-20% binder to char. Add water to create a thick, consistent paste.',
+    imageUrl: 'https://i.ibb.co/z5wQzV8/mixing-briquette-paste.jpg',
     videoHint: 'mixing briquette paste',
   },
   {
@@ -48,6 +53,7 @@ const steps = [
     title: '6. Briquetting/Pressing',
     content:
       'Feed the mixture into a briquette press. The machine will compact the material under high pressure to form dense briquettes. Various shapes can be produced depending on the die.',
+    imageUrl: 'https://i.ibb.co/yQxY2Lg/briquette-press.jpg',
     videoHint: 'briquette press',
   },
   {
@@ -55,6 +61,7 @@ const steps = [
     title: '7. Final Drying',
     content:
       'Dry the freshly pressed briquettes to remove excess moisture from the binder. Sun-dry or use a low-temperature oven until they are hard and durable. They are now ready for use or sale.',
+    imageUrl: 'https://i.ibb.co/5M5Vz9b/biomass-briquettes.jpg',
     videoHint: 'biomass briquettes',
   },
 ];
@@ -90,11 +97,11 @@ export default function SmartbriqPage() {
                      <div className="md:w-1/2">
                         <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                             <Image
-                                src="https://placehold.co/400x225.png"
-                                alt="Instructional video placeholder"
+                                src={step.imageUrl}
+                                alt={step.title}
                                 width={400}
                                 height={225}
-                                className="rounded-lg"
+                                className="rounded-lg object-cover w-full h-full"
                                 data-ai-hint={step.videoHint}
                             />
                         </div>

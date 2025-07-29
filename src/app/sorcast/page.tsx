@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { BrainCircuit, Loader, Map, Upload, FileImage, Trash2, MapPin } from 'lucide-react';
+import { BrainCircuit, Loader, Map, Upload, Trash2 } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { getYieldPrediction, type PredictionResult as ApiPredictionResult } from './actions';
 import { useToast } from '@/hooks/use-toast';
@@ -212,11 +212,11 @@ export default function SorcastPage() {
             <CardContent className="space-y-4">
                  <div className="aspect-video bg-muted rounded-lg flex items-center justify-center relative overflow-hidden group">
                     <Image 
-                        src={satelliteImageUri || "https://i.ibb.co/PsbPhP0Y/picture3.jpg"} 
-                        alt="Satellite image preview" 
-                        layout="fill" 
-                        objectFit="cover" 
-                        className="transition-all duration-300 group-hover:scale-105"
+                        src={satelliteImageUri || "https://i.ibb.co/b3sY9gD/picture3.jpg"} 
+                        alt="Satellite image preview"
+                        width={1280}
+                        height={720}
+                        className="transition-all duration-300 group-hover:scale-105 object-cover w-full h-full"
                     />
                     <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-4 p-4 transition-all duration-300 opacity-0 group-hover:opacity-100">
                         <div className="text-center text-white">
@@ -306,5 +306,3 @@ export default function SorcastPage() {
     </div>
   );
 }
-
-    

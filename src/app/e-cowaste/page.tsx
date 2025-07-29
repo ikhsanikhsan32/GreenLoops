@@ -21,7 +21,7 @@ const products = [
     weight: 'per kg',
     origin: 'West Java',
     carbonValue: '1.6 kg CO₂e saved/kg',
-    imageUrl: 'https://placehold.co/600x400.png',
+    imageUrl: 'https://i.ibb.co/k3mnjXg/premium-briquettes.jpg',
   },
   {
     name: 'High-Density Biomass Blocks',
@@ -29,7 +29,7 @@ const products = [
     weight: 'per kg',
     origin: 'Central Java',
     carbonValue: '1.5 kg CO₂e saved/kg',
-    imageUrl: 'https://placehold.co/600x400.png',
+    imageUrl: 'https://i.ibb.co/N21T4M1/high-density-blocks.jpg',
   },
   {
     name: 'Eco-Friendly Fuel Bricks',
@@ -37,7 +37,7 @@ const products = [
     weight: 'per kg',
     origin: 'East Java',
     carbonValue: '1.55 kg CO₂e saved/kg',
-    imageUrl: 'https://placehold.co/600x400.png',
+    imageUrl: 'https://i.ibb.co/68v1KkL/eco-fuel-bricks.jpg',
   },
   {
     name: 'Standard Sorghum Briquettes',
@@ -45,7 +45,7 @@ const products = [
     weight: 'per kg',
     origin: 'Banten',
     carbonValue: '1.4 kg CO₂e saved/kg',
-    imageUrl: 'https://placehold.co/600x400.png',
+    imageUrl: 'https://i.ibb.co/xGCXWpQ/standard-briquettes.jpg',
   },
 ];
 
