@@ -8,7 +8,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,7 +19,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { BrainCircuit, Loader, AreaChart, PieChart, Info } from 'lucide-react';
-import Image from 'next/image';
 import SorcastChart from './sorcast-chart';
 import { useState, useTransition } from 'react';
 import { getYieldPrediction, type PredictionResult as ApiPredictionResult } from './actions';
