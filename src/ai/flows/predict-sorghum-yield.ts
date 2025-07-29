@@ -28,6 +28,9 @@ const prompt = ai.definePrompt({
   - Farming Technique: {{{farmingTechnique}}}
   - Planting Distance: {{{plantingDistance}}}
   - Last 5 Years Harvest Data (t/ha): {{#each historicalHarvestData}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
+  {{#if satelliteImageUri}}
+  - Satellite Image: {{media url=satelliteImageUri}}
+  {{/if}}
 
   Also provide a 5-year historical average based on the provided data and a confidence score for your prediction.
   

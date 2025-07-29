@@ -18,17 +18,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { BrainCircuit, Loader } from 'lucide-react';
+import { BrainCircuit, Loader, Map, Upload, FileImage, Trash2 } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { getYieldPrediction, type PredictionResult as ApiPredictionResult } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { type PredictSorghumYieldOutput } from '@/ai/types';
+import BiomassAllocationChart from './biomass-allocation-chart';
+import SorcastChart from './sorcast-chart';
+import Image from 'next/image';
 
 export default function SorcastPage() {
   const [landArea, setLandArea] = useState('10');
   const [farmingTechnique, setFarmingTechnique] = useState('conventional');
   const [plantingDistance, setPlantingDistance] = useState('75cm x 25cm');
   const [harvestData, setHarvestData] = useState(['3.2', '3.5', '3.3', '3.6', '3.4']);
+  const [satelliteImageUri, setSatelliteImageUri] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [prediction, setPrediction] = useState<PredictSorghumYieldOutput | null>(null);
   const { toast } = useToast();
@@ -38,6 +42,39 @@ export default function SorcastPage() {
     newHarvestData[index] = value;
     setHarvestData(newHarvestData);
   }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 4 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please upload an image smaller than 4MB.",
+          variant: 'destructive'
+        })
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSatelliteImageUri(e.target?.result as string);
+      };
+      reader.onerror = () => {
+        toast({
+          title: "Error reading file",
+          description: "There was an issue reading your file. Please try again.",
+          variant: 'destructive'
+        })
+      }
+      reader.readAsDataURL(file);
+    }
+  };
+  
+  const handleResetImage = () => {
+    setSatelliteImageUri(null);
+    const fileInput = document.getElementById('satellite-image') as HTMLInputElement;
+    if(fileInput) fileInput.value = '';
+  }
+
 
   const handlePredict = () => {
     const historicalHarvestData = harvestData.map(d => parseFloat(d)).filter(d => !isNaN(d));
@@ -56,10 +93,11 @@ export default function SorcastPage() {
       farmingTechnique,
       plantingDistance,
       historicalHarvestData,
+      satelliteImageUri: satelliteImageUri ?? undefined,
     };
 
     if (isNaN(input.landArea)) {
-       toast({
+      toast({
         title: "Input Tidak Valid",
         description: "Silakan masukkan angka yang valid untuk semua parameter.",
         variant: 'destructive'
@@ -78,13 +116,31 @@ export default function SorcastPage() {
         setPrediction(null);
       } else {
         setPrediction(result.data);
-         toast({
+        toast({
           title: "Prediksi Berhasil",
           description: `Prediksi hasil panen adalah ${result.data.predictedYield.toFixed(2)} t/ha.`,
         })
       }
     });
   };
+
+  const biomassChartData = prediction ? [
+    { name: 'Grains (Food)', value: prediction.biomassAllocation.grains, fill: 'var(--color-grains)' },
+    { name: 'Stalks/Leaves (Briquettes)', value: prediction.biomassAllocation.stalksAndLeaves, fill: 'var(--color-stalksAndLeaves)' },
+    { name: 'Residual (Bioethanol/Fertilizer)', value: prediction.biomassAllocation.residualBiomass, fill: 'var(--color-residualBiomass)' },
+  ] : [];
+
+  const yieldChartData = prediction ? [
+    ...harvestData.map((yieldStr, index) => ({
+      year: `Year ${index - 4}`,
+      historical: parseFloat(yieldStr)
+    })),
+    {
+      year: 'Predicted',
+      predicted: prediction.predictedYield,
+      historical: null,
+    }
+  ] : [];
 
   return (
     <div className="container mx-auto py-12 px-4 md:px-6">
@@ -97,7 +153,8 @@ export default function SorcastPage() {
         </p>
       </div>
 
-      <div className="grid gap-8 max-w-md mx-auto">
+      <div className="grid lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-1 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="font-headline">Parameter Input</CardTitle>
@@ -129,31 +186,78 @@ export default function SorcastPage() {
                 <Label>Data Panen 5 Tahun Terakhir (t/ha)</Label>
                 <div className="grid grid-cols-5 gap-2">
                   {harvestData.map((data, index) => (
-                    <Input 
-                      key={index} 
-                      type="number" 
-                      placeholder={`Tahun ${index + 1}`} 
-                      value={data} 
+                    <Input
+                      key={index}
+                      type="number"
+                      placeholder={`Tahun ${index + 1}`}
+                      value={data}
                       onChange={(e) => handleHarvestDataChange(index, e.target.value)}
                     />
                   ))}
                 </div>
               </div>
-              <Button className="w-full mt-4" onClick={handlePredict} disabled={isPending}>
-                {isPending ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <BrainCircuit className="w-4 h-4 mr-2" />}
-                {isPending ? 'Memprediksi...' : 'Prediksi Hasil & Alokasi'}
-              </Button>
             </CardContent>
           </Card>
-
-           {prediction && (
-            <Card className="animate-in fade-in-50">
-                <CardHeader>
-                    <CardTitle className="font-headline">Hasil Prediksi</CardTitle>
-                    <CardDescription>Hasil dari model AI Sorcast.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-center">
+          <Card>
+            <CardHeader>
+                <CardTitle className="font-headline flex items-center gap-2">
+                    <Map className="w-5 h-5"/>
+                    Analisis Citra Satelit (Opsional)
+                </CardTitle>
+                <CardDescription>Pilih wilayah Anda di peta atau unggah gambar untuk analisis AI yang lebih akurat.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center relative overflow-hidden">
+                    {satelliteImageUri ? (
+                        <Image src={satelliteImageUri} alt="Satellite image preview" layout="fill" objectFit="contain" />
+                    ) : (
+                        <div className="text-center text-muted-foreground flex flex-col items-center">
+                            <FileImage className="w-12 h-12 mb-2"/>
+                            <p>Pratinjau gambar akan muncul di sini</p>
+                        </div>
+                    )}
+                </div>
+                <div className="flex gap-2">
+                <Label htmlFor="satellite-image" className="flex-grow">
+                    <Input id="satellite-image" type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                    <Button asChild variant="outline" className="w-full cursor-pointer">
+                        <div>
+                        <Upload className="w-4 h-4 mr-2"/>
+                        Pilih Gambar
+                        </div>
+                    </Button>
+                </Label>
+                {satelliteImageUri && <Button variant="ghost" size="icon" onClick={handleResetImage}><Trash2 className="w-4 h-4 text-destructive"/></Button>}
+                </div>
+            </CardContent>
+          </Card>
+          <Button className="w-full" size="lg" onClick={handlePredict} disabled={isPending}>
+            {isPending ? <Loader className="w-5 h-5 mr-2 animate-spin" /> : <BrainCircuit className="w-5 h-5 mr-2" />}
+            {isPending ? 'Memprediksi...' : 'Prediksi Hasil & Alokasi'}
+          </Button>
+        </div>
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline">Dasbor Prediksi</CardTitle>
+              <CardDescription>Hasil dari model AI Sorcast.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isPending && (
+                <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
+                    <Loader className="w-10 h-10 animate-spin mb-4" />
+                    <p>Menjalankan prediksi...</p>
+                </div>
+              )}
+              {!isPending && !prediction && (
+                <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
+                    <BrainCircuit className="w-10 h-10 mb-4" />
+                    <p>Hasil prediksi akan ditampilkan di sini.</p>
+                </div>
+              )}
+              {prediction && (
+                <div className="space-y-6 animate-in fade-in-50">
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                         <div className="p-4 bg-muted rounded-lg">
                             <Label className="text-sm text-muted-foreground">Prediksi Hasil Panen</Label>
                             <p className="text-2xl font-bold text-primary">{prediction.predictedYield.toFixed(2)} t/ha</p>
@@ -162,10 +266,34 @@ export default function SorcastPage() {
                             <Label className="text-sm text-muted-foreground">Rata-rata Historis</Label>
                             <p className="text-2xl font-bold">{prediction.historicalAverage.toFixed(2)} t/ha</p>
                         </div>
+                         <div className="p-4 bg-muted rounded-lg">
+                            <Label className="text-sm text-muted-foreground">Tingkat Kepercayaan</Label>
+                            <p className="text-2xl font-bold text-primary">{(prediction.confidence * 100).toFixed(0)}%</p>
+                        </div>
                     </div>
-                </CardContent>
-            </Card>
-           )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Card>
+                           <CardHeader>
+                                <CardTitle className="font-headline text-lg">Alokasi Biomassa</CardTitle>
+                           </CardHeader>
+                           <CardContent>
+                                <BiomassAllocationChart data={biomassChartData} />
+                           </CardContent>
+                        </Card>
+                         <Card>
+                           <CardHeader>
+                                <CardTitle className="font-headline text-lg">Tren Hasil Panen</CardTitle>
+                           </CardHeader>
+                           <CardContent>
+                                <SorcastChart data={yieldChartData} />
+                           </CardContent>
+                        </Card>
+                    </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

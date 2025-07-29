@@ -38,6 +38,9 @@ export const PredictSorghumYieldInputSchema = z.object({
   farmingTechnique: z.string().describe('The farming technique used (e.g., conventional, organic).'),
   plantingDistance: z.string().describe('The distance between plants (e.g., "75cm x 25cm").'),
   historicalHarvestData: z.array(z.number()).describe('An array of harvest data in tons per hectare for the last 5 years.'),
+  satelliteImageUri: z.string().optional().describe(
+    "A satellite image of the land, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+  ),
 });
 export type PredictSorghumYieldInput = z.infer<
   typeof PredictSorghumYieldInputSchema
