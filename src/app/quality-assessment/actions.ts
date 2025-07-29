@@ -2,9 +2,8 @@
 
 import {
   analyzeBriquetteQuality,
-  type AnalyzeBriquetteQualityInput,
-  type AnalyzeBriquetteQualityOutput,
 } from '@/ai/flows/analyze-briquette-quality';
+import type { AnalyzeBriquetteQualityInput, AnalyzeBriquetteQualityOutput } from '@/ai/types';
 
 export type AnalysisResult = {
     data?: AnalyzeBriquetteQualityOutput;

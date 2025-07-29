@@ -2,9 +2,8 @@
 
 import {
   predictSorghumYield,
-  type PredictSorghumYieldInput,
-  type PredictSorghumYieldOutput,
 } from '@/ai/flows/predict-sorghum-yield';
+import type { PredictSorghumYieldInput, PredictSorghumYieldOutput } from '@/ai/types';
 
 export type PredictionResult = {
     data?: PredictSorghumYieldOutput;

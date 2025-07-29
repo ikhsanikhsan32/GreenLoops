@@ -3,28 +3,15 @@
  * @fileOverview Predicts sorghum yield based on input parameters.
  * 
  * - predictSorghumYield - A function that predicts sorghum yield.
- * - PredictSorghumYieldInput - The input type for the predictSorghumYield function.
- * - PredictSorghumYieldOutput - The return type for the predictSorghumYield function.
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
-
-export const PredictSorghumYieldInputSchema = z.object({
-  soilPh: z.number().describe('The pH level of the soil.'),
-  nitrogen: z.number().describe('The amount of nitrogen in the soil in kg/ha.'),
-  plantingDensity: z.number().describe('The density of plants per hectare.'),
-  sorghumVariety: z.string().describe('The variety of sorghum planted.'),
-});
-export type PredictSorghumYieldInput = z.infer<typeof PredictSorghumYieldInputSchema>;
-
-
-export const PredictSorghumYieldOutputSchema = z.object({
-  predictedYield: z.number().describe('The predicted yield in tons per hectare.'),
-  historicalAverage: z.number().describe('The 5-year historical average yield for this variety in tons per hectare.'),
-  confidence: z.number().describe('The confidence level of the prediction, from 0 to 1.'),
-});
-export type PredictSorghumYieldOutput = z.infer<typeof PredictSorghumYieldOutputSchema>;
+import {
+    PredictSorghumYieldInputSchema,
+    PredictSorghumYieldOutputSchema,
+    type PredictSorghumYieldInput,
+    type PredictSorghumYieldOutput
+} from '@/ai/types';
 
 export async function predictSorghumYield(input: PredictSorghumYieldInput): Promise<PredictSorghumYieldOutput> {
   return predictSorghumYieldFlow(input);
