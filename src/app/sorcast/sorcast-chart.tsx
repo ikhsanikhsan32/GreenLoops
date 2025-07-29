@@ -9,14 +9,6 @@ import {
 } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const chartData = [
-  { year: '2019', historical: 2.8, predicted: null },
-  { year: '2020', historical: 3.5, predicted: null },
-  { year: '2021', historical: 3.2, predicted: null },
-  { year: '2022', historical: 4.1, predicted: null },
-  { year: '2023', historical: 3.8, predicted: null },
-  { year: '2024', historical: null, predicted: 4.5 },
-];
 
 const chartConfig = {
   historical: {
@@ -29,11 +21,15 @@ const chartConfig = {
   },
 };
 
-export default function SorcastChart() {
+type SorcastChartProps = {
+    data: any[];
+}
+
+export default function SorcastChart({ data }: SorcastChartProps) {
   return (
-    <ChartContainer config={chartConfig} className="min-h-[400px] w-full">
+    <ChartContainer config={chartConfig} className="min-h-[300px] w-full h-full">
       <LineChart
-        data={chartData}
+        data={data}
         margin={{
           top: 5,
           right: 20,
@@ -65,6 +61,7 @@ export default function SorcastChart() {
           stroke="var(--color-historical)"
           strokeWidth={2}
           dot={true}
+          connectNulls
         />
         <Line
           dataKey="predicted"
@@ -73,6 +70,7 @@ export default function SorcastChart() {
           strokeWidth={2}
           strokeDasharray="5 5"
           dot={true}
+          connectNulls
         />
       </LineChart>
     </ChartContainer>
