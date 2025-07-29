@@ -201,41 +201,41 @@ export default function SorcastPage() {
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="overflow-hidden">
             <CardHeader>
                 <CardTitle className="font-headline flex items-center gap-2">
                     <Map className="w-5 h-5"/>
                     Analisis Citra Satelit (Opsional)
                 </CardTitle>
-                <CardDescription>Pilih wilayah Anda di peta atau unggah gambar untuk analisis AI yang lebih akurat.</CardDescription>
+                <CardDescription>Unggah gambar untuk analisis AI yang lebih akurat.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center relative overflow-hidden">
-                    {satelliteImageUri ? (
-                        <Image src={satelliteImageUri} alt="Satellite image preview" layout="fill" objectFit="contain" />
-                    ) : (
-                        <div className="relative w-full h-full">
-                            <Image src="https://placehold.co/600x400.png" alt="Map placeholder" layout="fill" objectFit="cover" data-ai-hint="satellite map" />
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                                <div className="text-center text-white p-4 rounded-lg">
-                                    <MapPin className="w-12 h-12 mx-auto mb-2"/>
-                                    <p>Geser peta dan gambar lahan Anda</p>
-                                </div>
-                            </div>
+                 <div className="aspect-video bg-muted rounded-lg flex items-center justify-center relative overflow-hidden group">
+                    <Image 
+                        src={satelliteImageUri || "https://i.ibb.co/PsbPhP0Y/picture3.jpg"} 
+                        alt="Satellite image preview" 
+                        layout="fill" 
+                        objectFit="cover" 
+                        className="transition-all duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-4 p-4 transition-all duration-300 opacity-0 group-hover:opacity-100">
+                        <div className="text-center text-white">
+                             <h3 className="text-lg font-bold font-headline">Analisis Lahan Anda</h3>
+                             <p className="text-sm text-white/80">Unggah citra satelit atau drone dari lahan Anda.</p>
                         </div>
-                    )}
-                </div>
-                <div className="flex gap-2">
-                <Label htmlFor="satellite-image" className="flex-grow">
-                    <Input id="satellite-image" type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                    <Button asChild variant="outline" className="w-full cursor-pointer">
-                        <div>
-                        <Upload className="w-4 h-4 mr-2"/>
-                        Unggah Citra
+                        <div className="flex gap-2">
+                             <Label htmlFor="satellite-image" className="flex-grow">
+                                <Input id="satellite-image" type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                                <Button asChild variant="secondary" className="cursor-pointer">
+                                    <div>
+                                        <Upload className="w-4 h-4 mr-2"/>
+                                        Unggah Citra
+                                    </div>
+                                </Button>
+                             </Label>
+                             {satelliteImageUri && <Button variant="destructive" size="icon" onClick={handleResetImage}><Trash2 className="w-4 h-4"/></Button>}
                         </div>
-                    </Button>
-                </Label>
-                {satelliteImageUri && <Button variant="ghost" size="icon" onClick={handleResetImage}><Trash2 className="w-4 h-4 text-destructive"/></Button>}
+                    </div>
                 </div>
             </CardContent>
           </Card>
@@ -306,3 +306,5 @@ export default function SorcastPage() {
     </div>
   );
 }
+
+    
