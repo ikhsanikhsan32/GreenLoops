@@ -81,8 +81,8 @@ export default function SorcastPage() {
 
     if (historicalHarvestData.length !== 5) {
       toast({
-        title: "Input Tidak Lengkap",
-        description: "Silakan masukkan data panen untuk 5 tahun terakhir.",
+        title: "Incomplete Input",
+        description: "Please enter harvest data for the last 5 years.",
         variant: 'destructive'
       });
       return;
@@ -98,8 +98,8 @@ export default function SorcastPage() {
 
     if (isNaN(input.landArea)) {
       toast({
-        title: "Input Tidak Valid",
-        description: "Silakan masukkan angka yang valid untuk semua parameter.",
+        title: "Invalid Input",
+        description: "Please enter a valid number for all parameters.",
         variant: 'destructive'
       })
       return;
@@ -109,16 +109,16 @@ export default function SorcastPage() {
       const result: ApiPredictionResult = await getYieldPrediction(input);
       if (result.error || !result.data) {
         toast({
-          title: "Prediksi Gagal",
-          description: result.error || "Terjadi kesalahan yang tidak diketahui.",
+          title: "Prediction Failed",
+          description: result.error || "An unknown error occurred.",
           variant: 'destructive'
         })
         setPrediction(null);
       } else {
         setPrediction(result.data);
         toast({
-          title: "Prediksi Berhasil",
-          description: `Prediksi hasil panen adalah ${result.data.predictedYield.toFixed(2)} t/ha.`,
+          title: "Prediction Successful",
+          description: `The predicted yield is ${result.data.predictedYield.toFixed(2)} t/ha.`,
         })
       }
     });
@@ -152,7 +152,7 @@ export default function SorcastPage() {
           SORCAST
         </h1>
         <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-          Prediksi Hasil Panen Sorgum & Alokasi Biomassa. Masukkan data Anda untuk perkiraan berbasis AI yang mengoptimalkan seluruh tanaman untuk strategi tanpa limbah.
+          Sorghum Yield Prediction & Biomass Allocation. Input your data for an AI-driven forecast that optimizes the entire plant for a zero-waste strategy.
         </p>
       </div>
 
@@ -160,39 +160,39 @@ export default function SorcastPage() {
         <div className="grid lg:grid-cols-2 gap-8">
             <Card>
                 <CardHeader>
-                <CardTitle className="font-headline">Parameter Input</CardTitle>
-                <CardDescription>Masukkan detail di bawah ini untuk mendapatkan prediksi.</CardDescription>
+                <CardTitle className="font-headline">Input Parameters</CardTitle>
+                <CardDescription>Enter the details below to get a prediction.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="land-area">Luas Lahan (ha)</Label>
+                    <Label htmlFor="land-area">Land Area (ha)</Label>
                     <Input id="land-area" type="number" placeholder="e.g., 10" value={landArea} onChange={(e) => setLandArea(e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="farming-technique">Teknik Pertanian</Label>
+                    <Label htmlFor="farming-technique">Farming Technique</Label>
                     <Select value={farmingTechnique} onValueChange={setFarmingTechnique}>
                     <SelectTrigger id="farming-technique">
-                        <SelectValue placeholder="Pilih teknik" />
+                        <SelectValue placeholder="Select technique" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="conventional">Konvensional</SelectItem>
-                        <SelectItem value="organic">Organik</SelectItem>
-                        <SelectItem value="conservation">Tani Konservasi</SelectItem>
+                        <SelectItem value="conventional">Conventional</SelectItem>
+                        <SelectItem value="organic">Organic</SelectItem>
+                        <SelectItem value="conservation">Conservation Tillage</SelectItem>
                     </SelectContent>
                     </Select>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="planting-distance">Jarak Tanam</Label>
+                    <Label htmlFor="planting-distance">Planting Distance</Label>
                     <Input id="planting-distance" type="text" placeholder="e.g., 75cm x 25cm" value={plantingDistance} onChange={(e) => setPlantingDistance(e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                    <Label>Data Panen 5 Tahun Terakhir (t/ha)</Label>
+                    <Label>Last 5 Years Harvest Data (t/ha)</Label>
                     <div className="grid grid-cols-5 gap-2">
                     {harvestData.map((data, index) => (
                         <Input
                         key={index}
                         type="number"
-                        placeholder={`Tahun ${index + 1}`}
+                        placeholder={`Year ${index + 1}`}
                         value={data}
                         onChange={(e) => handleHarvestDataChange(index, e.target.value)}
                         />
@@ -205,9 +205,9 @@ export default function SorcastPage() {
                 <CardHeader>
                     <CardTitle className="font-headline flex items-center gap-2">
                         <Map className="w-5 h-5"/>
-                        Analisis Citra Satelit (Opsional)
+                        Satellite Image Analysis (Optional)
                     </CardTitle>
-                    <CardDescription>Unggah gambar untuk analisis AI yang lebih akurat.</CardDescription>
+                    <CardDescription>Upload an image for more accurate AI analysis.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="aspect-video bg-muted rounded-lg flex items-center justify-center relative overflow-hidden group">
@@ -220,8 +220,8 @@ export default function SorcastPage() {
                         />
                         <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-4 p-4 transition-all duration-300 opacity-0 group-hover:opacity-100">
                             <div className="text-center text-white">
-                                <h3 className="text-lg font-bold font-headline">Analisis Lahan Anda</h3>
-                                <p className="text-sm text-white/80">Unggah citra satelit atau drone dari lahan Anda.</p>
+                                <h3 className="text-lg font-bold font-headline">Analyze Your Land</h3>
+                                <p className="text-sm text-white/80">Upload a satellite or drone image of your land.</p>
                             </div>
                             <div className="flex gap-2">
                                 <Label htmlFor="satellite-image" className="flex-grow">
@@ -229,7 +229,7 @@ export default function SorcastPage() {
                                     <Button asChild variant="secondary" className="cursor-pointer">
                                         <div>
                                             <Upload className="w-4 h-4 mr-2"/>
-                                            Unggah Citra
+                                            Upload Image
                                         </div>
                                     </Button>
                                 </Label>
@@ -243,48 +243,48 @@ export default function SorcastPage() {
         
         <Button className="w-full" size="lg" onClick={handlePredict} disabled={isPending}>
             {isPending ? <Loader className="w-5 h-5 mr-2 animate-spin" /> : <BrainCircuit className="w-5 h-5 mr-2" />}
-            {isPending ? 'Memprediksi...' : 'Prediksi Hasil & Alokasi'}
+            {isPending ? 'Predicting...' : 'Predict Yield & Allocation'}
         </Button>
         
         {(isPending || prediction) && (
             <Card>
                 <CardHeader>
-                <CardTitle className="font-headline">Dasbor Prediksi</CardTitle>
-                <CardDescription>Hasil dari model AI Sorcast.</CardDescription>
+                <CardTitle className="font-headline">Prediction Dashboard</CardTitle>
+                <CardDescription>Results from the Sorcast AI model.</CardDescription>
                 </CardHeader>
                 <CardContent>
                 {isPending && (
                     <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
                         <Loader className="w-10 h-10 animate-spin mb-4" />
-                        <p>Menjalankan prediksi...</p>
+                        <p>Running prediction...</p>
                     </div>
                 )}
                 {!isPending && !prediction && (
                     <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
                         <BrainCircuit className="w-10 h-10 mb-4" />
-                        <p>Hasil prediksi akan ditampilkan di sini.</p>
+                        <p>Prediction results will be displayed here.</p>
                     </div>
                 )}
                 {prediction && (
                     <div className="space-y-6 animate-in fade-in-50">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                             <div className="p-4 bg-muted rounded-lg">
-                                <Label className="text-sm text-muted-foreground">Prediksi Hasil Panen</Label>
+                                <Label className="text-sm text-muted-foreground">Predicted Yield</Label>
                                 <p className="text-2xl font-bold text-primary">{prediction.predictedYield.toFixed(2)} t/ha</p>
                             </div>
                             <div className="p-4 bg-muted rounded-lg">
-                                <Label className="text-sm text-muted-foreground">Rata-rata Historis</Label>
+                                <Label className="text-sm text-muted-foreground">Historical Average</Label>
                                 <p className="text-2xl font-bold">{prediction.historicalAverage.toFixed(2)} t/ha</p>
                             </div>
                             <div className="p-4 bg-muted rounded-lg">
-                                <Label className="text-sm text-muted-foreground">Tingkat Kepercayaan</Label>
+                                <Label className="text-sm text-muted-foreground">Confidence Score</Label>
                                 <p className="text-2xl font-bold text-primary">{(prediction.confidence * 100).toFixed(0)}%</p>
                             </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Card>
                             <CardHeader>
-                                    <CardTitle className="font-headline text-lg">Alokasi Biomassa</CardTitle>
+                                    <CardTitle className="font-headline text-lg">Biomass Allocation</CardTitle>
                             </CardHeader>
                             <CardContent>
                                     <BiomassAllocationChart data={biomassChartData} />
@@ -292,7 +292,7 @@ export default function SorcastPage() {
                             </Card>
                             <Card>
                             <CardHeader>
-                                    <CardTitle className="font-headline text-lg">Tren Hasil Panen</CardTitle>
+                                    <CardTitle className="font-headline text-lg">Yield Trend</CardTitle>
                             </CardHeader>
                             <CardContent>
                                     <SorcastChart data={yieldChartData} />
