@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { BarChart3, Leaf, ScanSearch, Store } from 'lucide-react';
+import { BarChart3, Leaf, Store } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -29,16 +29,9 @@ export default function Home() {
     {
       title: 'E-Cowaste',
       description:
-        'A digital marketplace to buy and sell biomass briquettes and track your carbon impact.',
+        'A digital marketplace to buy, sell, and assess quality of biomass briquettes.',
       href: '/e-cowaste',
       icon: <Store className="w-8 h-8 text-primary" />,
-    },
-    {
-      title: 'AI Quality Assessment',
-      description:
-        'Instantly assess the quality of your biomass briquettes with our AI image recognition tool.',
-      href: '/quality-assessment',
-      icon: <ScanSearch className="w-8 h-8 text-primary" />,
     },
   ];
 
@@ -73,7 +66,7 @@ export default function Home() {
             Innovative tools designed to create a circular economy for
             agricultural waste.
           </p>
-          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
               <Card
                 key={feature.title}

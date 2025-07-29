@@ -11,7 +11,6 @@ const navLinks = [
   { href: '/sorcast', label: 'SORCAST' },
   { href: '/smartbriq', label: 'Smartbriq' },
   { href: '/e-cowaste', label: 'E-Cowaste' },
-  { href: '/quality-assessment', label: 'Quality Assessment' },
 ];
 
 export default function Header() {

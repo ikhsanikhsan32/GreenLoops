@@ -10,9 +10,10 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calculator } from 'lucide-react';
+import { Calculator, ScanSearch } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import QualityAnalyzer from './quality-analyzer';
 
 const products = [
   {
@@ -73,63 +74,76 @@ export default function ECowastePage() {
           sustainable future.
         </p>
       </div>
-
-      <div className="grid gap-8 lg:grid-cols-4">
-        <div className="lg:col-span-3">
-          <h2 className="text-2xl font-bold font-headline mb-6">
-            Featured Products
-          </h2>
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {products.map((product) => (
-              <Card key={product.name} className="flex flex-col">
-                <CardHeader className="p-0">
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    width={600}
-                    height={400}
-                    className="rounded-t-lg object-cover aspect-video"
-                    data-ai-hint="biomass briquettes"
-                  />
-                </CardHeader>
-                <CardContent className="pt-4 flex-grow">
-                  <h3 className="text-lg font-bold font-headline">{product.name}</h3>
-                  <p className="text-muted-foreground text-sm">{product.origin}</p>
-                  <p className="text-sm mt-2">{product.carbonValue}</p>
-                </CardContent>
-                <CardFooter className="flex justify-between items-center">
-                  <div>
-                    <p className="text-lg font-semibold text-primary">{product.price}</p>
-                    <p className="text-xs text-muted-foreground">{product.weight}</p>
-                  </div>
-                  <Button variant="outline">View Details</Button>
-                </CardFooter>
+      
+      <div className="space-y-16">
+        <div className="grid gap-8 lg:grid-cols-4">
+          <div className="lg:col-span-3">
+            <h2 className="text-2xl font-bold font-headline mb-6">
+              Featured Products
+            </h2>
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {products.map((product) => (
+                <Card key={product.name} className="flex flex-col">
+                  <CardHeader className="p-0">
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      width={600}
+                      height={400}
+                      className="rounded-t-lg object-cover aspect-video"
+                      data-ai-hint="biomass briquettes"
+                    />
+                  </CardHeader>
+                  <CardContent className="pt-4 flex-grow">
+                    <h3 className="text-lg font-bold font-headline">{product.name}</h3>
+                    <p className="text-muted-foreground text-sm">{product.origin}</p>
+                    <p className="text-sm mt-2">{product.carbonValue}</p>
+                  </CardContent>
+                  <CardFooter className="flex justify-between items-center">
+                    <div>
+                      <p className="text-lg font-semibold text-primary">{product.price}</p>
+                      <p className="text-xs text-muted-foreground">{product.weight}</p>
+                    </div>
+                    <Button variant="outline">View Details</Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </div>
+          <div className="lg:col-span-1 space-y-8">
+              <Button size="lg" className="w-full">List Your Product</Button>
+              <Card>
+                  <CardHeader>
+                      <CardTitle className="font-headline flex items-center gap-2"><Calculator className="w-5 h-5" /> Carbon Calculator</CardTitle>
+                      <CardDescription>Estimate your environmental impact.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                          <Label htmlFor="weight">Briquette Weight (kg)</Label>
+                          <Input id="weight" type="number" placeholder="e.g., 100" value={weight} onChange={(e) => setWeight(e.target.value)} />
+                      </div>
+                      <Button className="w-full" onClick={handleCalculate}>Calculate Savings</Button>
+                      {emissions !== null && (
+                          <div className="text-center pt-4">
+                              <p className="text-muted-foreground">Estimated Emissions Reduction:</p>
+                              <p className="text-2xl font-bold text-primary">{emissions.toFixed(2)} kg CO₂e</p>
+                          </div>
+                      )}
+                  </CardContent>
               </Card>
-            ))}
           </div>
         </div>
-        <div className="lg:col-span-1 space-y-8">
-            <Button size="lg" className="w-full">List Your Product</Button>
-            <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline flex items-center gap-2"><Calculator className="w-5 h-5" /> Carbon Calculator</CardTitle>
-                    <CardDescription>Estimate your environmental impact.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="weight">Briquette Weight (kg)</Label>
-                        <Input id="weight" type="number" placeholder="e.g., 100" value={weight} onChange={(e) => setWeight(e.target.value)} />
-                    </div>
-                    <Button className="w-full" onClick={handleCalculate}>Calculate Savings</Button>
-                    {emissions !== null && (
-                        <div className="text-center pt-4">
-                            <p className="text-muted-foreground">Estimated Emissions Reduction:</p>
-                            <p className="text-2xl font-bold text-primary">{emissions.toFixed(2)} kg CO₂e</p>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+
+        <div className="text-center">
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline flex items-center justify-center gap-4">
+            <ScanSearch className="w-10 h-10 text-primary"/>
+            AI Briquette Quality Assessment
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+            Upload an image of your biomass briquette to get an instant quality analysis and price suggestion powered by AI.
+          </p>
         </div>
+        <QualityAnalyzer />
       </div>
     </div>
   );
